@@ -1,8 +1,8 @@
 // import logo from '../assets/logo.svg';
-import './Home.css';
 import Header from './header/Header'
 import Footer from './footer/Footer'
 import Main from './main/Main'
+import './Home.css';
 
 function Home() {
   return (

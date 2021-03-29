@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
+import { ReactComponent as Logo } from '../../../assets/logo.svg'
 import './Footer.css';
 
 const Footer = (props) => {
@@ -9,7 +10,7 @@ const Footer = (props) => {
     <Container>
       <Row xs="2">
         <Col>
-          <p>Simple Step Solutions © {new Date().getFullYear()}</p>
+          <p><Logo style={{height: '50px', width: '50px'}}/>&nbsp;<a href="https://simplestep.ca">Simple Step Solutions</a> © {new Date().getFullYear()}</p>
         </Col>
         <Col>Column</Col>
       </Row>

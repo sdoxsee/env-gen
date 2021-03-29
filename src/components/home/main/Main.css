@@ -1,0 +1,15 @@
+.code-area {
+    width: 100%;
+    padding-top: 15px;
+}
+
+.code-area label {
+    font-size: large;
+    font-weight: bold;
+}
+.code-area #exampleText {
+    height: 200px;
+    font-family: 
+    Monaco, Consolas, 'Courier New', monospace;
+    background-color: whitesmoke
+}
