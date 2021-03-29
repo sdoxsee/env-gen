@@ -26,3 +26,24 @@
     background: black;
     padding: 10px;
 }
+
+.footer .footer-icons{
+	margin-top: 25px;
+}
+
+.footer .footer-icons a{
+	display: inline-block;
+	width: 35px;
+	height: 35px;
+	cursor: pointer;
+	background-color:  #33383b;
+	border-radius: 2px;
+
+	font-size: 20px;
+	color: #ffffff;
+	text-align: center;
+	line-height: 35px;
+
+	margin-right: 3px;
+	margin-bottom: 5px;
+}
