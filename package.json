@@ -10,7 +10,6 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.3",
     "bootstrap": "^4.6.0",
-    "ga-4-react": "^0.1.281",
     "i": "^0.3.6",
     "npm": "^7.7.5",
     "react": "^17.0.2",
