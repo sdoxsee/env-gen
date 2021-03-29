@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "env-gen",
+  "name": "Environment Variable Generator - for Spring Boot apps",
   "icons": [
     {
       "src": "favicon.ico",
