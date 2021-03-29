@@ -5,14 +5,16 @@ import './Footer.css';
 
 const Footer = (props) => {
   return (
+  <div className="footer">
     <Container>
       <Row xs="2">
-        <Col>Column</Col>
-        <Col>Column</Col>
-        <Col>Column</Col>
+        <Col>
+          <p>Simple Step Solutions © {new Date().getFullYear()}</p>
+        </Col>
         <Col>Column</Col>
       </Row>
     </Container>
+  </div>
   )
 }
 

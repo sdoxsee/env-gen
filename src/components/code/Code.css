@@ -1,3 +1,12 @@
 .code {
-    background-color: aqua;
+    /* background-color: aqua; */
+    width: 100%;
+}
+
+.code label {
+    font-size: large;
+    font-weight: bold;
+}
+.code #exampleText {
+    height: 200px;
 }

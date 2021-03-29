@@ -1,0 +1,8 @@
+.footer {
+    background-color: #292c2f;
+    width: 100%;
+    color: white;
+    /* https://stackoverflow.com/a/18935218/1098564 */
+    box-shadow: 0 50vh 0 50vh #292c2f;
+    padding-top: 15px;
+}
