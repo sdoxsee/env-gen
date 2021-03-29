@@ -11,6 +11,7 @@
     color: white;
     font-weight: bold;
 }
+.footer a:hover { color: whitesmoke; text-decoration: none; }
 
 .copyright a { color: whitesmoke; text-decoration: none; }
 .copyright a:link { color: whitesmoke; text-decoration: none; }
@@ -36,7 +37,7 @@
 	width: 35px;
 	height: 35px;
 	cursor: pointer;
-	background-color:  #33383b;
+	/* background-color:  #33383b; */
 	border-radius: 2px;
 
 	font-size: 20px;

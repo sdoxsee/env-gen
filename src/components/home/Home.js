@@ -1,4 +1,3 @@
-// import logo from '../assets/logo.svg';
 import Header from './header/Header'
 import Footer from './footer/Footer'
 import Main from './main/Main'
