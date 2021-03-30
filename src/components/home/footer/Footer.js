@@ -35,8 +35,10 @@ const Footer = (props) => {
               <ul>
                 <li>
                   <p>IntelliJ and other IDEs. (e.g. paste into IntelliJ run configuration)</p>
-                  <img width="400px" alt="IntelliJ Run Configuration using Environment Variables" src={intellij}/>
                 </li>
+              </ul>
+              <img width="400px" alt="IntelliJ Run Configuration using Environment Variables" src={intellij}/>              
+              <ul>
                 <li>
                   <p>Terminal</p>
                   <p><div className="code">FOO=bar mvn spring-boot:run</div></p>
