@@ -51,7 +51,7 @@ const Footer = (props) => {
           </ul>
         </Col>        
         <Col>
-        <p>Found an issue? Have a suggestion? {github} <a alt="Github Repository" href="https://github.com/sdoxsee/env-gen">Pull Requests</a> are welcome :)</p>
+        <p>Suggestions? Bugs? {github} <a alt="Github Repository" href="https://github.com/sdoxsee/env-gen">Pull Requests</a> are welcome :)</p>
           <p><img width="400px" alt="Created by Stephen Doxsee" src={stephen}/></p>
           <p>
           Created by Stephen Doxsee
