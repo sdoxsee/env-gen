@@ -4,20 +4,17 @@ import './index.css';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import GA4React from "ga-4-react";
+import ReactGA from 'react-ga';
 
-const ga4react = new GA4React("G-K86M2ZT1DQ");
+ReactGA.initialize('UA-193353057-1');
+ReactGA.pageview(window.location.pathname + window.location.search);
 
-(async () => {
-  await ga4react.initialize();
-
-  ReactDOM.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-    document.getElementById("root")
-  );
-})();
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById("root")
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
