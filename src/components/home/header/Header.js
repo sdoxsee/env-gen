@@ -6,7 +6,7 @@ const Header = (props) => {
     <div className="header border-bottom">
       <Container> 
           <h2>Environment Variable Generator</h2>
-          <p>for Spring Boot apps</p>
+          <p className="text-muted">for Spring Boot apps</p>
       </Container>
     </div>
   )

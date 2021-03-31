@@ -1,3 +1,6 @@
+import yaml from 'js-yaml';
+import _ from 'lodash';
+
 const outputFormatter = (outputType, properties) => {
     if (outputType === 'Simple') {
         return simpleFormatter(properties)
@@ -7,6 +10,8 @@ const outputFormatter = (outputType, properties) => {
         return kubernetesFormatter(properties)
     } else if (outputType === 'Properties') {
         return propertiesFormatter(properties)
+    } else if (outputType === 'YAML') {
+        return yamlFormatter(properties)
     } else {
         throw new Error("outputType " + outputType + "not supported");
     }
@@ -71,6 +76,16 @@ const propertiesFormatter = (properties) => {
             .concat('\n')       
     })
     return result;
+}
+
+const yamlFormatter = (properties) => {
+    var result = properties
+    .filter(Boolean) //removes empty lines
+    .reduce((acc, line) => {
+        _.set(acc, ...line.split("="));
+        return acc;
+    }, {})
+    return yaml.dump(result);
 }
 
 export default outputFormatter;
