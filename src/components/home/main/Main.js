@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Container, Row, Col, Alert, Label, Input } from 'reactstrap';
+import { Container, Row, Col, Alert, Label, Input, FormGroup } from 'reactstrap';
 import yaml from 'js-yaml';
 import deflate from '../../../utils/deflate'
+import outputFormatter from '../../../utils/outputFormatter'
 import './Main.css'
 
 const Main = (props) => {
 
-  const [yamlText, setYamlText] = useState('foo: bar');
+  const [yamlText, setYamlText] = useState('foo-bar:\n  baz:\n    - value1\n    - value2\n  enabled: true\nabcDef: value3');
+  const [outputType, setOutputType] = useState('Simple');
   const [properties, setProperties] = useState();
   const [alertText, setAlertText] = useState('');
 
@@ -37,14 +39,18 @@ const Main = (props) => {
     applyYamlText(`${event.target.value}`);
   };
 
-  var result = "";
-  if (properties) {
-
-    properties.forEach((property) => (
-      result = result.concat(property.split("=")[0].toUpperCase().replaceAll("-", "").replaceAll(".", "_")).concat("=").concat(property.split("=")[1]).concat('\n')
-    ))
+  const onChangeOutputTypeHandler = event => {
+    setOutputType(`${event.target.value}`);
+  };
+ 
+  var result
+  try {
+    result = properties ? outputFormatter(outputType, properties) : ''
+  } catch (e) {
+    console.log(e)
+    result = ''
   }
-
+  
   return (
     <div className="main">
     <Container>
@@ -64,10 +70,20 @@ const Main = (props) => {
       <Row>
         <Col>
           <div className="code-area">
-            <Label for="exampleText">Environment Variables</Label>
+            <FormGroup row>
+              <Label for="exampleSelect" sm={2}>Output</Label>
+              <Col sm={10}>
+                <Input type="select" name="select" id="exampleSelect" onChange={onChangeOutputTypeHandler}>
+                  <option>Simple</option>
+                  <option>Shell</option>
+                  <option>Kubernetes</option>
+                  <option>Properties</option>
+                </Input>
+              </Col>
+            </FormGroup>
             <Input type="textarea" name="text" id="exampleText" 
-            value={result}
-            onChange={onChangeHandler}/>
+              value={result}
+              onChange={onChangeHandler}/>  
             <br/>
           </div>
         </Col>
