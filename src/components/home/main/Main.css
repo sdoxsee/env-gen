@@ -7,7 +7,7 @@
     font-size: large;
     font-weight: bold;
 }
-.code-area #exampleText {
+.code-area #inputSelectMain, #outputSelectMain {
     height: 200px;
     font-family: 
     Monaco, Consolas, 'Courier New', monospace;
