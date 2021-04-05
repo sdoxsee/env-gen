@@ -4,8 +4,8 @@ import _ from 'lodash';
 const outputFormatter = (outputType, properties) => {
     if (outputType === 'Simple') {
         return simpleFormatter(properties)
-    } else if (outputType === 'Shell') {
-        return shellFormatter(properties)
+    } else if (outputType === 'Terminal') {
+        return terminalFormatter(properties)
     } else if (outputType === 'Kubernetes') {
         return kubernetesFormatter(properties)
     } else if (outputType === 'Properties') {
@@ -41,7 +41,7 @@ const simpleFormatter = (properties) => {
     return result;
 }
 
-const shellFormatter = (properties) => {
+const terminalFormatter = (properties) => {
     var result = "";
     properties.forEach((property) => {
         result = result

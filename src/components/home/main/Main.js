@@ -75,7 +75,7 @@ const Main = (props) => {
   };
 
   const createSelectItems = () => {
-    const regular = ['Simple', 'Shell', 'Kubernetes'];
+    const regular = ['Simple', 'Terminal', 'Kubernetes'];
     let items = []
     for (let i = 0; i < regular.length; i++) {       
          items.push(<option key={i} value={regular[i]}>{regular[i]}</option>);   
