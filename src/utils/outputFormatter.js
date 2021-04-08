@@ -1,16 +1,17 @@
 import yaml from 'js-yaml';
 import _ from 'lodash';
+import {Outputs} from '../components/home/main/Main'
 
 const outputFormatter = (outputType, properties) => {
-    if (outputType === 'Simple') {
+    if (outputType === Outputs.SIMPLE) {
         return simpleFormatter(properties)
-    } else if (outputType === 'Terminal') {
+    } else if (outputType === Outputs.TERMINAL) {
         return terminalFormatter(properties)
-    } else if (outputType === 'Kubernetes') {
+    } else if (outputType === Outputs.KUBERNETES) {
         return kubernetesFormatter(properties)
-    } else if (outputType === 'Properties') {
+    } else if (outputType === Outputs.PROPERTIES) {
         return propertiesFormatter(properties)
-    } else if (outputType === 'YAML') {
+    } else if (outputType === Outputs.YAML) {
         return yamlFormatter(properties)
     } else {
         throw new Error("outputType " + outputType + "not supported");
