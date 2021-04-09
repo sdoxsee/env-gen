@@ -18,11 +18,13 @@ const outputFormatter = (outputType, properties) => {
     }
 }
 
+// see https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-relaxed-binding-from-environment-variables
 const getName = property => (
     property
         .split("=")[0]
         .toUpperCase()
         .replaceAll("-", "")
+        .replaceAll("].", "_") // don't do double underscore after list element
         .replaceAll(".", "_")
         .replaceAll("[", "_")
         .replaceAll("]", "_")

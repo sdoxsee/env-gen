@@ -6,11 +6,11 @@ import outputFormatter from '../../../utils/outputFormatter'
 import './Main.css'
 
 export enum Formats {
-  YAML = "YAML",
-  PROPERTIES = "Properties",
-  SIMPLE = "Simple",
-  TERMINAL = "Terminal",
-  KUBERNETES = "Kubernetes",
+  YAML = "Spring Boot YAML",
+  PROPERTIES = "Spring Boot Properties",
+  SIMPLE = "Simple Environment Variables",
+  TERMINAL = "Terminal Environment Variables",
+  KUBERNETES = "Kubernetes Environment Variables",
 }
 
 enum ModelType {
@@ -139,6 +139,7 @@ const Main = () => {
   var outputText
   try {
     const properties = deflate(model.value) // Convert the JSON structure into an array of strings
+    console.log(model.value)
     outputText = properties ? outputFormatter(outputType, properties) : ''
   } catch (e) {
     console.log(e)
