@@ -1,14 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Alert, Label, Input, FormGroup } from 'reactstrap';
-// @ts-ignore
-import yaml from 'js-yaml';
-// @ts-ignore
-import _ from 'lodash';
 import deflate from '../../../utils/deflate'
+import inputHandler from '../../../utils/inputHandler'
 import outputFormatter from '../../../utils/outputFormatter'
 import './Main.css'
 
-enum Inputs {
+export enum Formats {
   YAML = "YAML",
   PROPERTIES = "Properties",
   SIMPLE = "Simple",
@@ -16,42 +13,58 @@ enum Inputs {
   KUBERNETES = "Kubernetes",
 }
 
-export enum Outputs {
-  YAML = "YAML",
-  PROPERTIES = "Properties",
-  SIMPLE = "Simple",
-  TERMINAL = "Terminal",
-  KUBERNETES = "Kubernetes",
+enum ModelType {
+  ENV,
+  FLAT,
 }
+
+interface Defaults {
+  modelType: ModelType,
+  outputType: string,
+  inputValue: string
+}
+
+interface Model {
+  inputModelType?: ModelType,
+  value?: string
+}
+
+const DefaultsMap = new Map<string, Defaults>([
+  [Formats.YAML, {
+    "modelType": ModelType.FLAT,
+    "outputType": Formats.SIMPLE,
+    "inputValue": 'foo-bar:\n  baz:\n    - value1\n    - value2\n  enabled: true\nabcDef: value3'
+  }],
+  [Formats.PROPERTIES, {
+    "modelType": ModelType.FLAT,
+    "outputType": Formats.SIMPLE,
+    "inputValue": 'foo-bar.baz[0]=value1\nfoo-bar.baz[1]=value2\nfoo-bar.enabled=true\nabcDef=value3'
+  }],
+  [Formats.SIMPLE, {
+    "modelType": ModelType.ENV,
+    "outputType": Formats.KUBERNETES,
+    "inputValue": 'FOOBAR_BAZ_0_=value1\nFOOBAR_BAZ_1_=value2\nFOOBAR_ENABLED=true\nABCDEF=value3'
+  }],
+  [Formats.TERMINAL, {
+    "modelType": ModelType.ENV,
+    "outputType": Formats.SIMPLE,
+    "inputValue": 'FOOBAR_BAZ_0_=value1 FOOBAR_BAZ_1_=value2 FOOBAR_ENABLED=true ABCDEF=value3'
+  }],
+  [Formats.KUBERNETES, {
+    "modelType": ModelType.ENV,
+    "outputType": Formats.SIMPLE,
+    "inputValue": "- name: FOOBAR_BAZ_0_\n  value: value1\n- name: FOOBAR_BAZ_1_\n  value: value2\n- name: FOOBAR_ENABLED\n  value: true\n- name: ABCDEF\n  value: value3"
+  }],
+]);
 
 const Main = () => {
 
-  const defaultInputType = Inputs.YAML
-  const defaultOutputType = Outputs.SIMPLE
-
-  interface Defaults {
-    outputType: string,
-    inputValue: string
-  }
-
-  const DefaultsMap = new Map<string, Defaults>([
-    [Inputs.YAML, {
-      "outputType": Outputs.SIMPLE,
-      "inputValue": 'foo-bar:\n  baz:\n    - value1\n    - value2\n  enabled: true\nabcDef: value3'
-    }],
-    [Inputs.PROPERTIES, {
-      "outputType": Outputs.SIMPLE,
-      "inputValue": 'foo-bar.baz[0]=value1\nfoo-bar.baz[1]=value2\nfoo-bar.enabled=true\nabcDef=value3'
-    }],
-    // [Inputs.SIMPLE, Outputs.KUBERNETES],
-    // [Inputs.TERMINAL, Outputs.SIMPLE],
-    // [Inputs.KUBERNETES, Outputs.SIMPLE],
-  ]);
-
+  const defaultInputType = Formats.YAML
   const [inputText, setInputText] = useState(DefaultsMap.get(defaultInputType)?.inputValue);
   const [inputType, setInputType] = useState(defaultInputType);
-  const [model, setModel] = useState({});
-  const [outputType, setOutputType] = useState(defaultOutputType);
+  const defaultModel: Model = {} 
+  const [model, setModel] = useState(defaultModel);
+  const [outputType, setOutputType] = useState(DefaultsMap.get(defaultInputType)?.outputType);
   const [alertText, setAlertText] = useState('');
 
   const onDismiss = () => setAlertText('');
@@ -59,28 +72,10 @@ const Main = () => {
   const applyInputText = useCallback((type, text) => {
     try {
       setInputText(text);
-      // var deflated
-      if (type === Inputs.YAML) {
-        // https://github.com/jusufazer/yaml2properties/blob/master/src/scripts/processor.js
-        const data = yaml.load(text);
-        if (typeof data !== 'object') {
-          throw new Error("I could be wrong, but YAML doesn't seem valid.")
-        }
-        setModel(data)
-      } else if (type === Inputs.PROPERTIES) {
-        // const flattened = deflated.join("\r\n")
-        var result = text.split("\n") //divides lines
-        .filter(Boolean) //removes empty lines
-        .reduce((acc: any, line: any) => {
-          _.set(acc, ...line.split("="));
-          return acc;
-        }, {})
-        setModel(result)
-      // console.log(result)
-      // const data2 = yaml.dump(result);
-      } else {
-        throw new Error("Unsupported input type")
-      }
+      setModel({
+        inputModelType: DefaultsMap.get(type)?.modelType,
+        value : inputHandler(type, text)
+      })
         // setModel(data)
       setAlertText('');
     } catch (e) {
@@ -101,9 +96,8 @@ const Main = () => {
 
   const onChangeInputTypeHandler = (event: any) => {
     const requestedInputType = event.target.value
-    // setInputText(requestedInputType === 'YAML' ? defaultYaml : defaultProperties)
     setInputType(requestedInputType);
-    setOutputType(defaultOutputType)
+    setOutputType(DefaultsMap.get(requestedInputType)?.outputType)
     applyInputText(requestedInputType, DefaultsMap.get(requestedInputType)?.inputValue)
   };
 
@@ -111,22 +105,40 @@ const Main = () => {
     setOutputType(event.target.value);
   };
 
-  const createSelectItems = () => {
-    const regular = ['Simple', 'Terminal', 'Kubernetes'];
+  // https://www.petermorlion.com/iterating-a-typescript-enum/
+  function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
+    return Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];
+  }
+
+  const createInputOptions = () => {
     let items = []
-    for (let i = 0; i < regular.length; i++) {       
-         items.push(<option key={i} value={regular[i]}>{regular[i]}</option>);   
-         //here I will be creating my options dynamically based on
-         //what props are currently passed to the parent component
+    let i = 0
+    for (const value of enumKeys(Formats)) {  
+      items.push(<option key={i} value={Formats[value]}>{Formats[value]}</option>);   
+      i++
     }
-    const newOption = inputType === 'YAML' ? 'Properties' : 'YAML'
-    items.push(<option key={regular.length} value={newOption}>{newOption}</option>);
+    return items;
+  }  
+
+  const createOutputOptions = () => {
+    const regular = [Formats.SIMPLE, Formats.TERMINAL, Formats.KUBERNETES];
+    let items = []
+    for (let i = 0; i < regular.length; i++) {
+      if (regular[i] !== inputType) { // don't include self in options
+         items.push(<option key={i} value={regular[i]}>{regular[i]}</option>);   
+      }
+    }
+        
+    if (DefaultsMap.get(inputType)?.modelType === ModelType.FLAT) {
+      const newOption = inputType === Formats.YAML ? Formats.PROPERTIES : Formats.YAML
+      items.push(<option key={regular.length} value={newOption}>{newOption}</option>);
+    }
     return items;
   }  
  
   var outputText
   try {
-    const properties = deflate(model) // Convert the JSON structure into an array of strings
+    const properties = deflate(model.value) // Convert the JSON structure into an array of strings
     outputText = properties ? outputFormatter(outputType, properties) : ''
   } catch (e) {
     console.log(e)
@@ -143,8 +155,7 @@ const Main = () => {
               <Label for="inputSelect" sm={2}>Input</Label>
               <Col sm={10}>
                 <Input type="select" name="select1" id="inputSelect" onChange={onChangeInputTypeHandler}>
-                  <option>YAML</option>
-                  <option>Properties</option>
+                  {createInputOptions()}
                 </Input>
               </Col>
             </FormGroup>
@@ -164,7 +175,7 @@ const Main = () => {
               <Label for="outputSelect" sm={2}>Output</Label>
               <Col sm={10}>
                 <Input type="select" value={outputType} name="select2" id="outputSelect" onChange={onChangeOutputTypeHandler}>
-                  {createSelectItems()}
+                  {createOutputOptions()}
                 </Input>
               </Col>
             </FormGroup>
