@@ -18,7 +18,14 @@ const inputHandler = (type: Formats, text: string) => {
       .split("\n") //divides lines
       .filter(Boolean) //removes empty lines
       .reduce((acc: any, line: any) => {
-        _.set(acc, ...line.split("="));
+        if (line.includes("=")) {
+          // https://stackoverflow.com/a/4607799/1098564
+          _.set(acc, ...line.split(/=(.+)/))
+        } else if (line.includes(": ")) {
+          _.set(acc, ...line.split(/: (.+)/))
+        } else {
+          throw new Error("Doesn't look like a valid .properties file")
+        }
         return acc;
       }, {})
   } else if (type === Formats.SIMPLE) {
@@ -48,11 +55,11 @@ const inputHandler = (type: Formats, text: string) => {
         _.set(acc, ...line.split("  value: "));
         return acc;
       }, {})
-    // https://stackoverflow.com/a/33510710/1098564
-    data = JSON.parse(JSON.stringify(data).replace(/"\s+|\s+"/g,'"'))
   } else {
     throw new Error("Unsupported input type")
   }
+  // https://stackoverflow.com/a/33510710/1098564
+  data = JSON.parse(JSON.stringify(data).replace(/"\s+|\s+"/g,'"'))
   return data
 }
 
