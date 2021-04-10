@@ -47,7 +47,9 @@ const inputHandler = (type: Formats, text: string) => {
       .reduce((acc: any, line: any) => {
         _.set(acc, ...line.split("  value: "));
         return acc;
-      }, {})  
+      }, {})
+    // https://stackoverflow.com/a/33510710/1098564
+    data = JSON.parse(JSON.stringify(data).replace(/"\s+|\s+"/g,'"'))
   } else {
     throw new Error("Unsupported input type")
   }
