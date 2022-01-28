@@ -45,14 +45,22 @@ const inputHandler = (type: Formats, text: string) => {
         return acc;
       }, {})
   } else if (type === Formats.KUBERNETES) {
-    // https://stackoverflow.com/a/10805198/1098564
     data = text
+      .replace(/>-/gm, "")
       .replace(/(\r\n|\n|\r)/gm, "")
       .trim()
       .split("- name: ") //divides lines
       .filter(Boolean) //removes empty lines
       .reduce((acc: any, line: any) => {
-        _.set(acc, ...line.split("  value: "));
+        var pair = line.split("  value: ")
+        if (pair[1]) {
+          pair[1] = pair[1]
+          // trim single quotes at beginning and end
+          .replace(/^['](.+(?=[']$))[']$/, '$1') // https://stackoverflow.com/a/19156197/1098564
+          // trim out double quotes (TODO: this needs improvement and is definitely bug prone...but works for most simple values I come across)
+          .replace(/"([^"]+(?="))"/g, '$1') 
+        }
+        _.set(acc, ...pair);
         return acc;
       }, {})
   } else {

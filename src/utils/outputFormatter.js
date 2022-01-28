@@ -30,7 +30,9 @@ const getName = property => (
         .replaceAll("]", "_")
 )
 
-const getValue = property => (property.split("=")[1])
+const getValue = property => ((property.split("=")[1])
+    .replace(/^["'](.+(?=["']$))["']$/, '$1') // https://stackoverflow.com/a/19156197/1098564
+)
 
 const simpleFormatter = (properties) => {
     var result = "";
@@ -64,7 +66,7 @@ const kubernetesFormatter = (properties) => {
             .concat(getName(property))
             // .concat('\n  value: \'')
             .concat('\n  value: ')
-            .concat(getValue(property))
+            .concat("'" + getValue(property) + "'")
             // .concat('\'\n')       
             .concat('\n')       
     })
@@ -87,7 +89,15 @@ const yamlFormatter = (properties) => {
     var result = properties
     .filter(Boolean) //removes empty lines
     .reduce((acc, line) => {
-        _.set(acc, ...line.split("="));
+        var pair = line.split("=")
+        if (pair[1]) {
+            if (pair[1] === 'true') {
+                pair[1] = true;
+            } else if (pair[1] === 'false') {
+                pair[1] = false;
+            }
+        }
+        _.set(acc, ...pair);
         return acc;
     }, {})
     return yaml.dump(result);

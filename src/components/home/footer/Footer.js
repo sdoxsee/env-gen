@@ -59,7 +59,7 @@ const Footer = (props) => {
               <p>
               <a href="https://twitter.com/doxsees">{twitter}</a>
               <a href="https://www.linkedin.com/in/sdoxsee">{linkedIn}</a>
-              <a href="https://sdoxsee.github.com"><Logo style={{height: '20px', width: '20px'}}/></a>
+              <a href="https://sdoxsee.github.io"><Logo style={{height: '20px', width: '20px'}}/></a>
               </p>
             </div>
           </p>
